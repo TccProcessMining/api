@@ -5,4 +5,4 @@ CREATE TABLE users (
     password varchar(255) NOT NULL,
     created_date TIMESTAMP DEFAULT now() NOT NULL,
     modified_date TIMESTAMP DEFAULT now() NOT NULL
-)
+);

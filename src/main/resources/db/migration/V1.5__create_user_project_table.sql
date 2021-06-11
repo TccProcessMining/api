@@ -11,4 +11,4 @@ FOREIGN KEY (project_id) REFERENCES project(id) ON DELETE SET NULL;
 
 ALTER TABLE user_project
 ADD CONSTRAINT user_project_user_id_fk
-FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE;
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;

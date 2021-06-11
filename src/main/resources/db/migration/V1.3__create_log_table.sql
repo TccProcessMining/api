@@ -4,4 +4,3 @@ CREATE TABLE log (
     created_date TIMESTAMP DEFAULT now() NOT NULL,
     modified_date TIMESTAMP DEFAULT now() NOT NULL
 );
-
