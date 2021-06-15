@@ -1,2 +1,34 @@
 preprocessingmining/com/example/preprocessingmining/PreprocessingMiningApplication.java
  preprocessingmining.com.example.preprocessingmining.PreprocessingMiningApplication
+preprocessingmining/com/example/preprocessingmining/util/exception/NotFoundException.java
+ preprocessingmining.com.example.preprocessingmining.util.exception.NotFoundException
+preprocessingmining/com/example/preprocessingmining/repository/UserRepository.java
+ preprocessingmining.com.example.preprocessingmining.repository.UserRepository
+preprocessingmining/com/example/preprocessingmining/config/WebSecurityConfiguration.java
+ preprocessingmining.com.example.preprocessingmining.config.WebSecurityConfiguration
+preprocessingmining/com/example/preprocessingmining/response/ProjectResponse.java
+ preprocessingmining.com.example.preprocessingmining.response.ProjectResponse
+preprocessingmining/com/example/preprocessingmining/service/ProjectService.java
+ preprocessingmining.com.example.preprocessingmining.service.ProjectService
+preprocessingmining/com/example/preprocessingmining/filter/AuthenticationFilter.java
+ preprocessingmining.com.example.preprocessingmining.filter.AuthenticationFilter
+preprocessingmining/com/example/preprocessingmining/util/exception/BasicRunTimeException.java
+ preprocessingmining.com.example.preprocessingmining.util.exception.BasicRunTimeException
+preprocessingmining/com/example/preprocessingmining/response/UserResponse.java
+ preprocessingmining.com.example.preprocessingmining.response.UserResponse
+preprocessingmining/com/example/preprocessingmining/controller/UserController.java
+ preprocessingmining.com.example.preprocessingmining.controller.UserController
+preprocessingmining/com/example/preprocessingmining/model/User.java
+ preprocessingmining.com.example.preprocessingmining.model.User
+preprocessingmining/com/example/preprocessingmining/repository/ProjectRepository.java
+ preprocessingmining.com.example.preprocessingmining.repository.ProjectRepository
+preprocessingmining/com/example/preprocessingmining/filter/AuthorizationFilter.java
+ preprocessingmining.com.example.preprocessingmining.filter.AuthorizationFilter
+preprocessingmining/com/example/preprocessingmining/service/UserDetailsServiceImpl.java
+ preprocessingmining.com.example.preprocessingmining.service.UserDetailsServiceImpl
+preprocessingmining/com/example/preprocessingmining/controller/ProjectController.java
+ preprocessingmining.com.example.preprocessingmining.controller.ProjectController
+preprocessingmining/com/example/preprocessingmining/model/Project.java
+ preprocessingmining.com.example.preprocessingmining.model.Project
+preprocessingmining/com/example/preprocessingmining/service/UserService.java
+ preprocessingmining.com.example.preprocessingmining.service.UserService
