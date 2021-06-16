@@ -1,5 +1,8 @@
 package preprocessingmining.com.example.preprocessingmining.model;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -7,19 +10,13 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "project_users", schema = "public")
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProjectUsers {
     @Id
     private String project_id;
     @Column(nullable = false)
     private String user_id;
-
-    public ProjectUsers(String project_id, String user_id) {
-        this.project_id = project_id;
-        this.user_id = user_id;
-    }
-
-    public ProjectUsers() {
-    }
 
     public String getProject_id() {
         return project_id;

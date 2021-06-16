@@ -1,0 +1,8 @@
+spring:
+  data:
+    cassandra:
+      port: 9042
+      contact-points: api_cassandra_1
+      keyspace-name: db_api
+      schema-action: create_if_not_exists
+      entity-base-package: com.example.cassandra.springbootcassandrademo.model

@@ -19,7 +19,7 @@ public class ProjectService implements Serializable {
     @Autowired
     private ProjectUsersRepository projectUsersRepository;
 
-    public Project getUserByID(@NotNull String userId) {
+    public Project findProjectByID(@NotNull String userId) {
         return projectRepository.findById(userId)
                 .orElse(null);
     }

@@ -1,5 +1,7 @@
 package preprocessingmining.com.example.preprocessingmining.model;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -9,6 +11,8 @@ import java.util.Calendar;
 
 @Entity
 @Table(name = "projects", schema = "public")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Project implements Serializable {
     @Id
     private String id;
@@ -24,18 +28,8 @@ public class Project implements Serializable {
     @Column(name = "modified_date")
     private Calendar modifiedDate;
 
-    public Project(String id, String name, Calendar createdDate, Calendar modifiedDate) {
-        this.id = id;
-        this.name = name;
-        this.createdDate = createdDate;
-        this.modifiedDate = modifiedDate;
-    }
     public Project(String name){
         this.name = name;
-    }
-
-    public Project(){
-
     }
 
     public String getId() {
