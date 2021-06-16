@@ -1,7 +1,0 @@
-spring:
-  data:
-    cassandra:
-      port: 9042
-      contact-points: localhost
-      keyspace-name: db_api
-      entity-base-package: com.example.cassandra.springbootcassandrademo.model

@@ -7,8 +7,6 @@ jsrc/test/java/preprocessingmining/com/example/preprocessingmining/Preprocessing
 flyway.conf,2/d/2db495575d742e731186c29ee8e542dc9d9b71ec
 õ
 ksrc/main/java/preprocessingmining/com/example/preprocessingmining/util/exception/BasicRunTimeException.java,e/8/e834b129338884d8dcc61e6a8c7eb83f7213614d
-í
-bsrc/main/java/preprocessingmining/com/example/preprocessingmining/filter/AuthenticationFilter.java,c/3/c3120a0242239b13767c35b6d047a640533743ca
 ñ
 fsrc/main/java/preprocessingmining/com/example/preprocessingmining/config/WebSecurityConfiguration.java,a/6/a63a45d27b1def7fff60ee5c7b7ce842b135cfbb
 ë
@@ -23,3 +21,15 @@ esrc/main/java/preprocessingmining/com/example/preprocessingmining/service/UserD
 csrc/main/java/preprocessingmining/com/example/preprocessingmining/repository/ProjectRepository.java,c/a/ca9d4ab4d3f12c370069802574b09e1f61176ca0
 ò
 hsrc/main/java/preprocessingmining/com/example/preprocessingmining/repository/ProjectUsersRepository.java,f/7/f7f0ed39809a7f824cf41c177ffcc8747670f9ff
+Å
+Qsrc/main/java/preprocessingmining/com/example/preprocessingmining/model/User.java,5/0/502611160f673d7d6a71d82182571afe7612e717
+Ñ
+Tsrc/main/java/preprocessingmining/com/example/preprocessingmining/model/Project.java,8/c/8c7882185ff1288022908d8fe82ae1ce1c41e850
+â
+Ysrc/main/java/preprocessingmining/com/example/preprocessingmining/model/ProjectUsers.java,a/2/a275b9b0a81cc94cd0c03862a646cd6e11d5f015
+ä
+Zsrc/main/java/preprocessingmining/com/example/preprocessingmining/service/UserService.java,2/e/2ef2e9c4a331d89834aae4d094a42d4d9ac8611b
+<
+build.gradle,f/0/f07866736216be0ee2aba49e392191aeae700a35
+B
+docker-compose.yml,3/5/35b8c13cf2eb2a194eada000eb310d65aed53b2a
