@@ -33,7 +33,8 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         if (token != null) {
-            String user = Jwts.parser().setSigningKey("711D95FD5D971A3E408D71F944AA0059CC5F6CA2018111FCDDD9E90C528160B16FEEFB237E0A171C5CD8CAC25C095A2FD740CD37794D1807158EAD11C23D27F9".getBytes())
+            String user = Jwts.parser()
+                    .setSigningKey("711D95FD5D971A3E408D71F944AA0059CC5F6CA2018111FCDDD9E90C528160B16FEEFB237E0A171C5CD8CAC25C095A2FD740CD37794D1807158EAD11C23D27F9".getBytes())
                     .parseClaimsJws(token.replace("Bearer", ""))
                     .getBody()
                     .getSubject();

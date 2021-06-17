@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import preprocessingmining.com.example.preprocessingmining.response.ResponseMessage;
+import preprocessingmining.com.example.preprocessingmining.service.AnalysisService;
 import preprocessingmining.com.example.preprocessingmining.service.DataOfProjectService;
 import preprocessingmining.com.example.preprocessingmining.service.ProjectService;
 import preprocessingmining.com.example.preprocessingmining.service.UserService;
@@ -23,10 +24,11 @@ public class ProjectController implements Serializable {
     private UserService userService;
     @Autowired
     private DataOfProjectService dataOfProjectService;
-
-    @GetMapping(path = "/{id}")
-    public ResponseEntity project(@PathVariable("id") String id) {
-        var user = projectService.findProjectByID(id);
+    @Autowired
+    private AnalysisService analysisService;
+    @GetMapping(path = "/{uuid}")
+    public ResponseEntity project(@PathVariable("uuid") String uuid) {
+        var user = projectService.findProjectByID(uuid);
         if (user == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(user);
     }
@@ -41,11 +43,12 @@ public class ProjectController implements Serializable {
 
         return ResponseEntity.ok(project);
     }
-    @PostMapping("/upload")
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/{uuid}/upload")
+    public ResponseEntity<ResponseMessage> uploadFile(@PathVariable("uuid") String uuid,
+                                                      @RequestParam("file") MultipartFile file) {
         String message = "";
         try {
-            dataOfProjectService.store(file);
+            dataOfProjectService.store(uuid,file);
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
@@ -54,5 +57,12 @@ public class ProjectController implements Serializable {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
     }
+    @PostMapping("/{uuid}/analysis")
+    public ResponseEntity analysis(@PathVariable("uuid") String uuid){
+
+        analysisService.analysis(uuid);
+        return ResponseEntity.ok("");
+    }
+
 
 }

@@ -15,10 +15,9 @@ public class UserController implements Serializable {
     @Autowired
     private UserService userService;
 
-
-    @GetMapping(path = "/{id}")
-    public ResponseEntity user(@PathVariable("id") String id) {
-        var user = userService.findUserByID(id);
+    @GetMapping(path = "/{uuid}")
+    public ResponseEntity user(@PathVariable("id") String uuid) {
+        var user = userService.findUserByID(uuid);
         if (user == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(user);
     }
