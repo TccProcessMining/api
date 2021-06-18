@@ -16,7 +16,7 @@ public class UserController implements Serializable {
     private UserService userService;
 
     @GetMapping(path = "/{uuid}")
-    public ResponseEntity user(@PathVariable("id") String uuid) {
+    public ResponseEntity user(@PathVariable("uuid") String uuid) {
         var user = userService.findUserByID(uuid);
         if (user == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(user);
