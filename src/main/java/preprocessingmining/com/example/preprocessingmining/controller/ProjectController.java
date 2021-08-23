@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import preprocessingmining.com.example.preprocessingmining.model.Field;
 import preprocessingmining.com.example.preprocessingmining.response.ResponseMessage;
 import preprocessingmining.com.example.preprocessingmining.service.AnalysisService;
 import preprocessingmining.com.example.preprocessingmining.service.DataOfProjectService;
@@ -12,6 +13,7 @@ import preprocessingmining.com.example.preprocessingmining.service.ProjectServic
 import preprocessingmining.com.example.preprocessingmining.service.UserService;
 
 import java.io.Serializable;
+import java.util.List;
 
 import static org.springframework.security.core.context.SecurityContextHolder.getContext;
 
@@ -26,6 +28,7 @@ public class ProjectController implements Serializable {
     private DataOfProjectService dataOfProjectService;
     @Autowired
     private AnalysisService analysisService;
+
     @GetMapping(path = "/{uuid}")
     public ResponseEntity project(@PathVariable("uuid") String uuid) {
         var user = projectService.findProjectByID(uuid);
@@ -43,26 +46,43 @@ public class ProjectController implements Serializable {
 
         return ResponseEntity.ok(project);
     }
+
     @PostMapping("/{uuid}/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@PathVariable("uuid") String uuid,
-                                                      @RequestParam("file") MultipartFile file) {
+                                                      @RequestParam("file") MultipartFile file
+                                                      ) {
         String message = "";
         try {
-            dataOfProjectService.store(uuid,file);
+            dataOfProjectService.store(uuid, file);
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
             e.printStackTrace();
             message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
+        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
     }
-    @PostMapping("/{uuid}/analysis")
-    public ResponseEntity analysis(@PathVariable("uuid") String uuid){
 
-        analysisService.analysis(uuid);
+    @PostMapping("/{uuid}/analysis")
+    public ResponseEntity analysis(@PathVariable("uuid") String projectId) {
+        analysisService.analysis(projectId);
         return ResponseEntity.ok("");
     }
 
+    @PostMapping("/{uuid}/fixData")
+    public ResponseEntity fixData(@PathVariable("uuid") String projectId) {
+        analysisService.fixData(projectId);
+        return ResponseEntity.ok("");
+    }
+    @PostMapping("/{uuid}/addFields")
+    public ResponseEntity addFields(@PathVariable("uuid") String projectId,
+                                    @RequestBody List<Field> fields) {
+        return ResponseEntity.ok(projectService.saveFilds(fields));
+    }
+
+    @PostMapping("/{uuid}/removeColumn/{columnName}")
+    public ResponseEntity removeColumn(@PathVariable("uuid") String uuid,@PathVariable("columnName") String comlumnName) {
+        analysisService.removeColumn(uuid,comlumnName);
+        return ResponseEntity.ok("");
+    }
 
 }

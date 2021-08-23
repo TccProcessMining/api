@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import preprocessingmining.com.example.preprocessingmining.model.DataOfProject;
 import preprocessingmining.com.example.preprocessingmining.repository.DataOfProjectRepository;
+import preprocessingmining.com.example.preprocessingmining.repository.FileFieldsTypeRepository;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -21,6 +22,8 @@ public class DataOfProjectService implements Serializable {
     @Autowired
     private DataOfProjectRepository dataOfProjectRepository;
     @Autowired
+    private FileFieldsTypeRepository fileFieldsTypeRepository;
+    @Autowired
     private  ProjectService projectService;
 
     @SneakyThrows
@@ -32,7 +35,8 @@ public class DataOfProjectService implements Serializable {
         }
         var save = new DataOfProject(UUID.randomUUID().toString(),projectId,
                             fileName, file.getContentType(), ByteBuffer.wrap(file.getBytes()));
-        return dataOfProjectRepository.save(save);
+        final var dataOfProject = dataOfProjectRepository.save(save);
+        return dataOfProject;
     }
 
     public List<DataOfProject> listByProjectId(@NotNull String projectId){
