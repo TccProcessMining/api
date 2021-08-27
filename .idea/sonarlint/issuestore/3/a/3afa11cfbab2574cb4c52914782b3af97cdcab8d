@@ -1,0 +1,7 @@
+
+g	java:S116"RRename this field "file_id" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ýó§œ
+c	java:S1000"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(»Í£´
+c	java:S1004"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ûö´ó
+f	java:S1174"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ûö´ó
+*
+java:S1700"Rename field "field"(ñê­„
