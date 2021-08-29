@@ -19,6 +19,8 @@ public class Field {
     @Column(nullable = false)
     private String file_id;
     @Column(nullable = false)
+    private String project_id;
+    @Column(nullable = false)
     private TypeField type;
     @Column(nullable = false)
     private String field;
@@ -51,6 +53,14 @@ public class Field {
 
     public void setFile_id(String file_id) {
         this.file_id = file_id;
+    }
+
+    public String getProject_id() {
+        return project_id;
+    }
+
+    public void setProject_id(String project_id) {
+        this.project_id = project_id;
     }
 
     public TypeField getType() {

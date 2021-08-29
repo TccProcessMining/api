@@ -1,6 +1,7 @@
 package preprocessingmining.com.example.preprocessingmining.service;
 
 
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import org.apache.spark.api.java.function.ForeachFunction;
 import org.apache.spark.api.java.function.MapFunction;
@@ -16,7 +17,6 @@ import preprocessingmining.com.example.preprocessingmining.model.DTO.UpdateValue
 import preprocessingmining.com.example.preprocessingmining.model.Field;
 import preprocessingmining.com.example.preprocessingmining.model.TableAnalysis;
 import preprocessingmining.com.example.preprocessingmining.util.DataUtil;
-import preprocessingmining.com.example.preprocessingmining.util.Permutation;
 import preprocessingmining.com.example.preprocessingmining.util.similarity.Jaccard;
 import scala.collection.JavaConverters;
 
@@ -24,6 +24,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -179,6 +181,7 @@ public class AnalysisService {
         });
     }
 
+    @Async
     public void analyseDates(@NotNull String projectId) {
         final var dataOfProjects = dataOfProjectService.listByProjectId(projectId);
 
@@ -195,29 +198,41 @@ public class AnalysisService {
 
             var ativitys = table.select(ativityColumn).distinct().as(Encoders.STRING()).collectAsList();
             //[(A,B),(B,A)]
-            var relationshipActivitys = Permutation.generatePerm(ativitys);
-            var save = new HashMap<List<String>, Long>();
+
+            Set<Set<Object>> relationshipActivitys = Sets.combinations(Set.of(ativitys.toArray()), 2);
+            var save = new HashMap<String, Long>();
             relationshipActivitys.forEach(ativitysValues -> {
-                        var analyseDate = new HashMap<String, AnalyseDate>();
+
+
+                        final var ativitysNames = ativitysValues.toArray();
                         final var where = table.where(
-                                table.col(ativityColumn).equalTo(ativitysValues.get(0)).or(
-                                        table.col(ativityColumn).equalTo(ativitysValues.get(1))));
+
+                                table.col(ativityColumn).equalTo(ativitysNames[0]).or(
+                                        table.col(ativityColumn).equalTo(ativitysNames[1])));
+                        final ConcurrentHashMap<String, AnalyseDate> analyseDate = new ConcurrentHashMap<>();
                         where.foreach((ForeachFunction<Row>) row -> {
                             if (analyseDate.get(caseIDColumn) != null)
-                                analyseDate.get(caseIDColumn).setD2(DataUtil.convert(row.getAs("data")));//FIXME:TROCAR PARA A VARIAVEL DE DATA
+                                analyseDate.get(caseIDColumn).setD2(DataUtil.convert(row.getAs("data inicial")));//FIXME:TROCAR PARA A VARIAVEL DE DATA
                             else
-                                analyseDate.put(row.getAs(caseIDColumn), new AnalyseDate(DataUtil.convert(row.getAs("data"))));
+                                analyseDate.put(row.getAs(caseIDColumn), new AnalyseDate(DataUtil.convert(row.getAs("data inicial"))));
                         });
                         AtomicLong diff = new AtomicLong();
                         analyseDate.forEach((key, value) -> {
                             diff.addAndGet(Math.abs(value.getD1().getTime() - value.getD2().getTime()));
                         });
-                        save.put(ativitysValues, diff.longValue()/analyseDate.size());
+                        if (analyseDate.size() > 0)
+                            save.put(ativitysValues.toString(), diff.longValue() / analyseDate.size());
+                        else
+                            save.put(ativitysValues.toString(), 0l);
                     }
             );
             String json = gson.toJson(save);
             System.out.println(json);//FIXME: Save on database
         });
+    }
+
+    private void teste(Object b, Object c) {
+        b = c;
     }
 
 

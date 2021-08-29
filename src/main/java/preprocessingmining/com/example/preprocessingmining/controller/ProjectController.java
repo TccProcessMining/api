@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import preprocessingmining.com.example.preprocessingmining.model.DTO.UpdateValue;
 import preprocessingmining.com.example.preprocessingmining.model.Field;
 import preprocessingmining.com.example.preprocessingmining.response.ResponseMessage;
 import preprocessingmining.com.example.preprocessingmining.service.AnalysisService;
@@ -68,6 +69,13 @@ public class ProjectController implements Serializable {
         return ResponseEntity.ok("");
     }
 
+    @PostMapping("/{uuid}/analyseDates")
+    public ResponseEntity analyseDates(@PathVariable("uuid") String projectId) {
+        analysisService.analyseDates(projectId);
+        return ResponseEntity.ok("");
+    }
+
+
     @PostMapping("/{uuid}/fixData")
     public ResponseEntity fixData(@PathVariable("uuid") String projectId) {
         analysisService.fixData(projectId);
@@ -76,12 +84,25 @@ public class ProjectController implements Serializable {
     @PostMapping("/{uuid}/addFields")
     public ResponseEntity addFields(@PathVariable("uuid") String projectId,
                                     @RequestBody List<Field> fields) {
+        fields.forEach(field -> field.setProject_id(projectId));
         return ResponseEntity.ok(projectService.saveFilds(fields));
     }
 
     @PostMapping("/{uuid}/removeColumn/{columnName}")
     public ResponseEntity removeColumn(@PathVariable("uuid") String uuid,@PathVariable("columnName") String comlumnName) {
         analysisService.removeColumn(uuid,comlumnName);
+        return ResponseEntity.ok("");
+    }
+
+    @PostMapping("/{uuid}/mergeColumns/{columnName}")
+    public ResponseEntity mergeColumns(@PathVariable("uuid") String uuid,@RequestBody String comlumnName) {
+        //analysisService.mergeColumns(uuid,comlumnName);
+        return ResponseEntity.ok("");
+    }
+
+    @PostMapping("/{uuid}/updateValue")
+    public ResponseEntity updateValue(@PathVariable("uuid") String uuid,@RequestBody UpdateValue updateValue) {
+        analysisService.updateValue(uuid,updateValue);
         return ResponseEntity.ok("");
     }
 
