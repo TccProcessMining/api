@@ -14,6 +14,7 @@ import preprocessingmining.com.example.preprocessingmining.repository.ProjectUse
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService implements Serializable {
@@ -39,9 +40,10 @@ public class ProjectService implements Serializable {
     }
 
     public List<Field> saveFilds(@NotNull List<Field> fields) {
-        return (List<Field>) fields.stream().map(field -> {
+        return  fields.stream().map(field -> {
+            field.setId(UUID.randomUUID().toString());
             return fileFieldsTypeRepository.save(field);
-        });
+        }).collect(Collectors.toList());
     }
 
     public List<Field> getFilds(@NotNull String projectID){

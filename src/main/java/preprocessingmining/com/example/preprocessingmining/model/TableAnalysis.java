@@ -1,7 +1,9 @@
 package preprocessingmining.com.example.preprocessingmining.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,37 +11,21 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class TableAnalysis {
     private String name;
-    private List<ColumnAnalysis> columns;
+    private List<ColumnAnalysis> valueColumns;
+    private HashMap<String, Double> correlationColumns;
     private HashMap<String, Integer> correlationTables;
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
+    public void addValueColumns(ColumnAnalysis columnAnalysis) {
+        if(this.valueColumns == null) this.setValueColumns(new ArrayList<>());
+        this.valueColumns.add(columnAnalysis);
     }
-
-    public List<ColumnAnalysis> getColumns() {
-        return columns;
-    }
-
-    public void setColumns(List<ColumnAnalysis> columns) {
-        this.columns = columns;
-    }
-
-    public HashMap<String, Integer> getCorrelationTables() {
-        return correlationTables;
-    }
-
-    public void setCorrelationTables(HashMap<String, Integer> correlationTables) {
-        this.correlationTables = correlationTables;
-    }
-
-    public void addColumns(ColumnAnalysis columnAnalysis) {
-        if(this.columns == null) this.setColumns(new ArrayList<>());
-        this.columns.add(columnAnalysis);
+    public void addCorrelationColumns(String key, Double value) {
+        if(this.correlationColumns == null) this.setCorrelationColumns(new HashMap<>());
+        this.correlationColumns.put(key, value);
     }
 }

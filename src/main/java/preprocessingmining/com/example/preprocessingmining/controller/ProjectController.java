@@ -69,6 +69,12 @@ public class ProjectController implements Serializable {
         return ResponseEntity.ok("");
     }
 
+    @PostMapping("/{uuid}/applyActivitys")
+    public ResponseEntity applyActivitys(@PathVariable("uuid") String projectId) {
+        analysisService.applyActivitys(projectId);
+        return ResponseEntity.ok("");
+    }
+
     @PostMapping("/{uuid}/analyseDates")
     public ResponseEntity analyseDates(@PathVariable("uuid") String projectId) {
         analysisService.analyseDates(projectId);

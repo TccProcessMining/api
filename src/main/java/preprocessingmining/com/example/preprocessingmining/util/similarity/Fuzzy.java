@@ -40,4 +40,9 @@ public class Fuzzy extends BaseSimilarity {
 
         return this.normalizeValue(result, length);
     }
+
+    @Override
+    protected double calculateD(StringBuilder str1, StringBuilder str2) {
+        return 0;
+    }
 }

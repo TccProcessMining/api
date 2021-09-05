@@ -31,4 +31,9 @@ public class Jaccard extends BaseSimilarity {
         double result = this.getResult(str1, str2);
         return this.normalizeValue(result);
     }
+
+    @Override
+    public double calculateD(StringBuilder str1, StringBuilder str2) {
+        return this.getResult(str1, str2);
+    }
 }

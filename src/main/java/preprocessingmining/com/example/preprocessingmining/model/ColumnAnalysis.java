@@ -1,41 +1,21 @@
 package preprocessingmining.com.example.preprocessingmining.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashMap;
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class ColumnAnalysis {
     private String name;
-    private HashMap<String, Integer> correlationValues;
-    private HashMap<String, Integer> correlationColumns;
+    private HashMap<String, Double> correlationValues;
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public HashMap<String, Integer> getCorrelationValues() {
-        return correlationValues;
-    }
-
-    public void setCorrelationValues(HashMap<String, Integer> correlationValues) {
-        this.correlationValues = correlationValues;
-    }
-
-    public HashMap<String, Integer> getCorrelationColumns() {
-        return correlationColumns;
-    }
-
-    public void setCorrelationColumns(HashMap<String, Integer> correlationColumns) {
-        this.correlationColumns = correlationColumns;
-    }
-
-    public void addCorrelationValues(String key, Integer value){
+    public void addCorrelationValues(String key, Double value){
         if(this.correlationValues == null) setCorrelationValues(new HashMap<>());
         this.correlationValues.put(key, value);
     }

@@ -5,28 +5,24 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import org.apache.spark.api.java.function.ForeachFunction;
 import org.apache.spark.api.java.function.MapFunction;
+import org.apache.spark.api.java.function.ReduceFunction;
 import org.apache.spark.sql.*;
+import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import preprocessingmining.com.example.preprocessingmining.model.Analysis;
-import preprocessingmining.com.example.preprocessingmining.model.ColumnAnalysis;
+import preprocessingmining.com.example.preprocessingmining.model.*;
 import preprocessingmining.com.example.preprocessingmining.model.DTO.AnalyseDate;
 import preprocessingmining.com.example.preprocessingmining.model.DTO.UpdateValue;
-import preprocessingmining.com.example.preprocessingmining.model.Field;
-import preprocessingmining.com.example.preprocessingmining.model.TableAnalysis;
 import preprocessingmining.com.example.preprocessingmining.util.DataUtil;
 import preprocessingmining.com.example.preprocessingmining.util.similarity.Jaccard;
 import scala.collection.JavaConverters;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class AnalysisService {
@@ -37,11 +33,11 @@ public class AnalysisService {
     @Autowired
     private Gson gson;
     @Autowired
-    private DataUtil dataUtil;
-    @Autowired
     private ProjectService projectService;
     @Autowired
     private FildsService fildsService;
+    @Autowired
+    private FileAnalysisService fileAnalysisService;
 
     @Async
     public void analysis(@NotNull String projectId) {
@@ -58,7 +54,8 @@ public class AnalysisService {
 
             Dataset<Row> table = session.read().format("csv").option("header", "true").load("./temp.csv");
             final var columns = table.columns();
-            var header = table.head().toSeq();
+            var headers = table.columns();
+            var headers_combinations = Sets.combinations(Set.of(headers), 2);
             var tableAnalysis = new TableAnalysis();
             tableAnalysis.setName(dataOfProject.getName());
             for (String column : columns) {
@@ -68,28 +65,49 @@ public class AnalysisService {
                 for (String baseValue : values) {
                     for (String analysisValue : values) {
                         if (baseValue != null && analysisValue != null) {
-                            final var result = jaccard.calculate(new StringBuilder(baseValue),
+                            final var result = jaccard.calculateD(new StringBuilder(baseValue),
                                     new StringBuilder(analysisValue));
                             columnAnalysis.addCorrelationValues(baseValue + ":" + analysisValue, result);
                         }
                     }
                 }
-                tableAnalysis.addColumns(columnAnalysis);
+                tableAnalysis.addValueColumns(columnAnalysis);
             }
+            headers_combinations.forEach(headers_combination -> {
+                final var headers_name = headers_combination.toArray();
+                final var result = jaccard.calculateD(new StringBuilder(headers_name[0].toString()),
+                        new StringBuilder(headers_name[1].toString()));
+                tableAnalysis.addCorrelationColumns(headers_name[0].toString() + ":" + headers_name[1].toString(), result);
+            });
+
             analysis.addTable(tableAnalysis);
         });
-        String json = gson.toJson(analysis);
-        System.out.println(json);//FIXME: Save on database
+        final var fileAnalysis = new FileAnalysis();
+        fileAnalysis.setId(UUID.randomUUID().toString());
+        fileAnalysis.setProject_id(projectId);
+        fileAnalysis.setType(TypeAnalysis.Activitys);
+        fileAnalysis.setAnalysis(gson.toJson(analysis));
+        fileAnalysisService.save(fileAnalysis);
+    }
 
+    public void applyActivitys(@NotNull String projectId) {
+        var fileAnalysis = fileAnalysisService.findByProjectId(projectId, TypeAnalysis.Activitys);
+        var analysis = gson.fromJson(fileAnalysis.getAnalysis(), Analysis.class);
+        analysis.getTables().forEach(tableAnalysis -> {
+            var name = tableAnalysis.getName();
+            tableAnalysis.getCorrelationColumns().forEach((key, value) -> {
+                if (value > 0.9) {
+                    mergeColumns(projectId, name, key.split(":"));
+                }
+            });
+        });
     }
 
     private static void writeBytesToFile(String fileOutput, byte[] bytes)
             throws IOException {
-
         try (FileOutputStream fos = new FileOutputStream(fileOutput)) {
             fos.write(bytes);
         }
-
     }
 
     public void fixData(@NotNull String projectId) {//FIXME: Save on database
@@ -119,7 +137,6 @@ public class AnalysisService {
                     }, table.encoder());
                 }
             });
-
         });
     }
 
@@ -175,7 +192,7 @@ public class AnalysisService {
                     var rowToList = JavaConverters.seqAsJavaList(row.toSeq()).toArray(); // ROW ->  List
                     if (updateValue.getId().equals(rowToList[row.fieldIndex(identifierColumn)]))
                         rowToList[index] = updateValue.getValue();
-                    return RowFactory.create(rowToList);
+                    return new GenericRowWithSchema(rowToList, row.schema());
                 }, table.encoder());
             }
         });
@@ -200,40 +217,78 @@ public class AnalysisService {
             //[(A,B),(B,A)]
 
             Set<Set<Object>> relationshipActivitys = Sets.combinations(Set.of(ativitys.toArray()), 2);
-            var save = new HashMap<String, Long>();
+            var save = new HashMap<String, AnalyseDate>();
+
             relationshipActivitys.forEach(ativitysValues -> {
-
-
                         final var ativitysNames = ativitysValues.toArray();
-                        final var where = table.where(
+                        final var filter = table.where(table.col(ativityColumn).equalTo(ativitysNames[0]).or(
+                                table.col(ativityColumn).equalTo(ativitysNames[1])));
 
-                                table.col(ativityColumn).equalTo(ativitysNames[0]).or(
-                                        table.col(ativityColumn).equalTo(ativitysNames[1])));
-                        final ConcurrentHashMap<String, AnalyseDate> analyseDate = new ConcurrentHashMap<>();
-                        where.foreach((ForeachFunction<Row>) row -> {
-                            if (analyseDate.get(caseIDColumn) != null)
-                                analyseDate.get(caseIDColumn).setD2(DataUtil.convert(row.getAs("data inicial")));//FIXME:TROCAR PARA A VARIAVEL DE DATA
-                            else
-                                analyseDate.put(row.getAs(caseIDColumn), new AnalyseDate(DataUtil.convert(row.getAs("data inicial"))));
+
+                        var withColumn = filter.withColumn("diff", functions.lit((long) 0l));
+
+                        var reduce = withColumn.reduce((ReduceFunction<Row>) (v1, v2) -> {
+                            final var index = v1.fieldIndex("diff");
+                            var rowToList = JavaConverters.seqAsJavaList(v1.toSeq()).toArray();
+                            if (v1.getAs(caseIDColumn).equals(v2.getAs(caseIDColumn))) {
+                                rowToList[index] = (long) rowToList[index] + Math.abs(DataUtil.convert(v1.getAs("data inicial")).getTime() - DataUtil.convert(v2.getAs("data inicial")).getTime());
+                            }
+
+                            return new GenericRowWithSchema(rowToList, v2.schema());// RowFactory.create(rowToList);
                         });
-                        AtomicLong diff = new AtomicLong();
-                        analyseDate.forEach((key, value) -> {
-                            diff.addAndGet(Math.abs(value.getD1().getTime() - value.getD2().getTime()));
-                        });
-                        if (analyseDate.size() > 0)
-                            save.put(ativitysValues.toString(), diff.longValue() / analyseDate.size());
-                        else
-                            save.put(ativitysValues.toString(), 0l);
+                        var analyseDate = new AnalyseDate();
+                        analyseDate.setProbability(withColumn.count() / (double) table.count());
+                        if (withColumn.count() > 0l) {
+                            analyseDate.setTime((long) reduce.getAs("diff") / withColumn.count());
+                            save.put(ativitysValues.toString(), analyseDate);
+                        } else {
+                            analyseDate.setTime(0l);
+                            save.put(ativitysValues.toString(), analyseDate);
+                        }
                     }
             );
-            String json = gson.toJson(save);
-            System.out.println(json);//FIXME: Save on database
+            final var fileAnalysis = new FileAnalysis();
+            fileAnalysis.setFile_id(dataOfProject.getId());
+            fileAnalysis.setProject_id(dataOfProject.getProjectId());
+            fileAnalysis.setType(TypeAnalysis.Dates);
+            fileAnalysis.setAnalysis(gson.toJson(save));
+            fileAnalysisService.save(fileAnalysis);
         });
     }
 
-    private void teste(Object b, Object c) {
-        b = c;
-    }
+    public void applyDates(@NotNull String projectId) {
+        final var dataOfProjects = dataOfProjectService.listByProjectId(projectId);
+        dataOfProjects.forEach(dataOfProject -> {
+            SparkSession session = SparkSession.builder().appName("join").master("local[*]").getOrCreate();
+            try {
+                writeBytesToFile("./temp.csv", dataOfProject.getFile().array());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Dataset<Row> table = session.read().format("csv").option("header", "true").load("./temp.csv");
+            var analysisDates = fileAnalysisService.findByFileId(dataOfProject.getId(), TypeAnalysis.Dates).getAnalysis();
+            Map<String, AnalyseDate> map = new HashMap<>();
+            final Map<String, AnalyseDate> finalMap = (Map<String, AnalyseDate>) gson.fromJson(analysisDates, map.getClass());
+            final var ativityColumn = fildsService.ativityColumn(projectId, dataOfProject.getId());
+            final var identifierColumn = fildsService.identifierColumn(projectId, dataOfProject.getId());
+            final var caseIDColumn = fildsService.caseIdColumn(projectId, dataOfProject.getId());
+            var dataNaN = table.filter(table.col("data inicial").isNaN());//FIXME:TROCAR PARA O CAMPO DA DATA
 
+            dataNaN.foreach((ForeachFunction<Row>) row -> {
+                AtomicReference<AnalyseDate> analyseDate = new AtomicReference<>();
+                AtomicReference<String> activityRelation = new AtomicReference<>("");
+                finalMap.forEach((key, value) -> {
+                    var valueActivity = row.getAs(ativityColumn).toString();
+                    if (key.contains(valueActivity) &&
+                            analyseDate.get().getProbability() < value.getProbability())
+                        analyseDate.set(value);
+                    activityRelation.set(key.split(valueActivity + ":")[0]);
+                });
+                var select = table.select(table.col(caseIDColumn).equalTo(row.getAs(caseIDColumn)).desc())
+                        .select(table.col(ativityColumn).equalTo(activityRelation));
+
+            });
+        });
+    }
 
 }

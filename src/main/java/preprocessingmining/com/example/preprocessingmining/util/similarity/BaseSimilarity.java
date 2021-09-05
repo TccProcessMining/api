@@ -19,4 +19,5 @@ public  abstract class BaseSimilarity {
 
     protected abstract int calculate(StringBuilder str1, StringBuilder str2);
 
+    protected abstract double calculateD(StringBuilder str1, StringBuilder str2);
 }

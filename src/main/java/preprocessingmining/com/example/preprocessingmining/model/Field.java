@@ -1,7 +1,9 @@
 package preprocessingmining.com.example.preprocessingmining.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,6 +14,8 @@ import java.util.Calendar;
 @Table(name = "file_fields_type", schema = "public")
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class Field {
 
     @Id
@@ -37,62 +41,6 @@ public class Field {
     public Field(TypeField type, String field) {
         this.type = type;
         this.field = field;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getFile_id() {
-        return file_id;
-    }
-
-    public void setFile_id(String file_id) {
-        this.file_id = file_id;
-    }
-
-    public String getProject_id() {
-        return project_id;
-    }
-
-    public void setProject_id(String project_id) {
-        this.project_id = project_id;
-    }
-
-    public TypeField getType() {
-        return type;
-    }
-
-    public void setType(TypeField type) {
-        this.type = type;
-    }
-
-    public String getField() {
-        return field;
-    }
-
-    public void setField(String field) {
-        this.field = field;
-    }
-
-    public Calendar getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Calendar createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Calendar getModifiedDate() {
-        return modifiedDate;
-    }
-
-    public void setModifiedDate(Calendar modifiedDate) {
-        this.modifiedDate = modifiedDate;
     }
 
     public boolean isIdentifier(){
