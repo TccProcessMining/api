@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import preprocessingmining.com.example.preprocessingmining.model.DTO.ProjectDto;
 import preprocessingmining.com.example.preprocessingmining.model.DTO.UpdateValue;
+import preprocessingmining.com.example.preprocessingmining.model.DataOfProject;
 import preprocessingmining.com.example.preprocessingmining.model.Field;
 import preprocessingmining.com.example.preprocessingmining.response.ResponseMessage;
 import preprocessingmining.com.example.preprocessingmining.service.AnalysisService;
@@ -32,9 +34,12 @@ public class ProjectController implements Serializable {
 
     @GetMapping(path = "/{uuid}")
     public ResponseEntity project(@PathVariable("uuid") String uuid) {
-        var user = projectService.findProjectByID(uuid);
-        if (user == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(user);
+        var project = projectService.findProjectByID(uuid);
+        if (project == null) return ResponseEntity.notFound().build();
+        var dataOfProjects = dataOfProjectService.listByProjectId(uuid);
+        if(dataOfProjects.size() == 0)    return ResponseEntity.ok(project);
+        var projectDto = new ProjectDto(project, dataOfProjects);
+        return  ResponseEntity.ok(projectDto);
     }
 
     @PostMapping(path = "")

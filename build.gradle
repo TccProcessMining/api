@@ -38,7 +38,7 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-parent', version: '2.5.1', ext: 'pom'
 
-    implementation (group: 'org.apache.spark', name: 'spark-sql_2.12', version: '3.1.2') {
+    implementation(group: 'org.apache.spark', name: 'spark-sql_2.12', version: '3.1.2') {
         exclude group: 'org.slf4j', module: 'slf4j-log4j12'
         exclude group: 'org.codehaus.janino', module: 'janino'
         exclude group: 'org.codehaus.janino', module: 'commons-compiler'
@@ -71,6 +71,7 @@ dependencies {
     testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
 
 }
+configurations.all { exclude module: 'slf4j-log4j12' exclude module: 'jms' exclude module: 'jmxtools' exclude module: 'jmxri' }
 
 test {
     useJUnitPlatform()
