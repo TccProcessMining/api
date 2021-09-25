@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import preprocessingmining.com.example.preprocessingmining.model.DTO.ProjectDto;
 import preprocessingmining.com.example.preprocessingmining.model.DTO.UpdateValue;
-import preprocessingmining.com.example.preprocessingmining.model.DataOfProject;
 import preprocessingmining.com.example.preprocessingmining.model.Field;
 import preprocessingmining.com.example.preprocessingmining.response.ResponseMessage;
 import preprocessingmining.com.example.preprocessingmining.service.AnalysisService;

@@ -4,22 +4,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import preprocessingmining.com.example.preprocessingmining.model.DTO.UserDto;
+import preprocessingmining.com.example.preprocessingmining.model.Project;
 import preprocessingmining.com.example.preprocessingmining.model.User;
+import preprocessingmining.com.example.preprocessingmining.service.ProjectService;
 import preprocessingmining.com.example.preprocessingmining.service.UserService;
 
 import java.io.Serializable;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/users")
 public class UserController implements Serializable {
     @Autowired
     private UserService userService;
+    @Autowired
+    private ProjectService projectService;
 
     @GetMapping(path = "/{uuid}")
     public ResponseEntity user(@PathVariable("uuid") String uuid) {
         var user = userService.findUserByID(uuid);
         if (user == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(user);
+        var projectList = projectService.findProjectByUserID(uuid);
+        return ResponseEntity.ok(new UserDto(user, projectList));
     }
 
     @PostMapping(path = "/signup")
@@ -27,4 +34,5 @@ public class UserController implements Serializable {
     public ResponseEntity save(@RequestBody User user) {
         return ResponseEntity.ok(userService.save(user));
     }
+
 }

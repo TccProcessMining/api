@@ -225,7 +225,7 @@ public class AnalysisService {
                                 table.col(ativityColumn).equalTo(ativitysNames[1])));
 
 
-                        var withColumn = filter.withColumn("diff", functions.lit((long) 0l));
+                        var withColumn = filter.withColumn("diff", functions.lit(0l));
 
                         var reduce = withColumn.reduce((ReduceFunction<Row>) (v1, v2) -> {
                             final var index = v1.fieldIndex("diff");

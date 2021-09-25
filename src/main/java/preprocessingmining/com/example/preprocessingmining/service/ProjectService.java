@@ -30,6 +30,10 @@ public class ProjectService implements Serializable {
                 .orElse(null);
     }
 
+    public List<Project> findProjectByUserID(@NotNull String userId) {
+        return projectRepository.findProjectByUserID(userId);
+    }
+
     public Project save(@NotNull String projectName, @NotNull User user) {
         var project = new Project(projectName);
         project.setId(UUID.randomUUID().toString());
