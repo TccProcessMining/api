@@ -15,6 +15,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import preprocessingmining.com.example.preprocessingmining.filter.AuthenticationFilter;
 import preprocessingmining.com.example.preprocessingmining.filter.AuthorizationFilter;
 import preprocessingmining.com.example.preprocessingmining.service.UserDetailsServiceImpl;
+import preprocessingmining.com.example.preprocessingmining.service.UserService;
 
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -22,7 +23,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
-
+    @Autowired
+    private UserService userService;
 
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().and().csrf().disable().authorizeRequests()
@@ -30,7 +32,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .addFilter(new AuthenticationFilter(authenticationManager()))
+                .addFilter(new AuthenticationFilter(authenticationManager(),userService))
                 .addFilter(new AuthorizationFilter(authenticationManager()))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
