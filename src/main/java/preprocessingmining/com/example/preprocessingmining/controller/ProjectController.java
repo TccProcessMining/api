@@ -41,9 +41,9 @@ public class ProjectController implements Serializable {
         return  ResponseEntity.ok(projectDto);
     }
 
-    @PostMapping(path = "")
+    @PostMapping(path = "/{name}")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity save(@RequestBody String projectName) {
+    public ResponseEntity save(@PathVariable("name") String projectName) {
         var authentication = getContext().getAuthentication();
         var mail = authentication.getPrincipal().toString();
         final var user = userService.findUserByMail(mail);

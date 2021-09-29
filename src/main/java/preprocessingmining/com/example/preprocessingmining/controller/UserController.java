@@ -13,6 +13,8 @@ import preprocessingmining.com.example.preprocessingmining.service.UserService;
 import java.io.Serializable;
 import java.util.List;
 
+import static org.springframework.security.core.context.SecurityContextHolder.getContext;
+
 @RestController
 @RequestMapping(path = "/users")
 public class UserController implements Serializable {
@@ -33,6 +35,18 @@ public class UserController implements Serializable {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity save(@RequestBody User user) {
         return ResponseEntity.ok(userService.save(user));
+    }
+
+
+    @PostMapping(path = "/")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity save(@PathVariable("name") String projectName) {
+        var authentication = getContext().getAuthentication();
+        var mail = authentication.getPrincipal().toString();
+        final var user = userService.findUserByMail(mail);
+        if (user == null) return ResponseEntity.notFound().build();
+        var projectList = projectService.findProjectByUserID(user.getId());
+        return ResponseEntity.ok(new UserDto(user, projectList));
     }
 
 }
