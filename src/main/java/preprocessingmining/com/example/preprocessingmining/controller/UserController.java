@@ -38,7 +38,7 @@ public class UserController implements Serializable {
     }
 
 
-    @PostMapping(path = "/")
+    @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity save(@PathVariable("name") String projectName) {
         var authentication = getContext().getAuthentication();
