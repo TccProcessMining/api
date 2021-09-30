@@ -55,7 +55,7 @@ public class ProjectController implements Serializable {
     @PostMapping("/{uuid}/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@PathVariable("uuid") String uuid,
                                                       @RequestParam("file") MultipartFile file
-                                                      ) {
+    ) {
         String message = "";
         try {
             dataOfProjectService.store(uuid, file);

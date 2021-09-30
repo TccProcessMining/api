@@ -38,9 +38,8 @@ public class UserController implements Serializable {
     }
 
 
-    @PostMapping(path = "")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity save(@PathVariable("name") String projectName) {
+    @GetMapping(path = "")
+    public ResponseEntity tete() {
         var authentication = getContext().getAuthentication();
         var mail = authentication.getPrincipal().toString();
         final var user = userService.findUserByMail(mail);
