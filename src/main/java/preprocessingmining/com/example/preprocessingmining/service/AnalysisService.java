@@ -231,7 +231,8 @@ public class AnalysisService {
                             final var index = v1.fieldIndex("diff");
                             var rowToList = JavaConverters.seqAsJavaList(v1.toSeq()).toArray();
                             if (v1.getAs(caseIDColumn).equals(v2.getAs(caseIDColumn))) {
-                                rowToList[index] = (long) rowToList[index] + Math.abs(DataUtil.convert(v1.getAs("data inicial")).getTime() - DataUtil.convert(v2.getAs("data inicial")).getTime());
+                                if(v1.getAs("data inicial") != null && v2.getAs("data inicial") != null)
+                                    rowToList[index] = (long) rowToList[index] + Math.abs(DataUtil.convert(v1.getAs("data inicial")).getTime() - DataUtil.convert(v2.getAs("data inicial")).getTime());
                             }
 
                             return new GenericRowWithSchema(rowToList, v2.schema());// RowFactory.create(rowToList);
